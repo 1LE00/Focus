@@ -1,0 +1,148 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* css-resets */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font: inherit; /* Get rid of all font sizes and heights */
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+html {
+  color-scheme: dark light; /* Default dark */
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  text-rendering: optimizeSpeed;
+  min-height: 100vh;
+}
+
+a {
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-wrap: balance;
+}
+
+img,
+picture,
+svg,
+video {
+  /* Media responsive */
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  background: none;
+  appearance: none;
+  border: none;
+  &:focus-visible {
+    outline: 1px solid rgba(255, 255, 255, 0.5);
+  }
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+  &:focus-visible {
+    outline: 1px solid rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* Remove all animations, transitions and smooth scroll for people that prefer not to see them */
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :has(:target) {
+    scroll-behavior: smooth;
+    scroll-padding-top: 3rem;
+  }
+}
+
+/* css-resets */
+
+:root {
+  --color-focus: hsl(0, 45%, 51%);
+  --color-short: hsl(206, 53%, 51%);
+  --color-long: hsl(140, 42%, 38%);
+}
+
+body {
+  background-color: var(--color-focus);
+  padding: 0.75rem;
+  transition: background-color 1s ease-out;
+}
+
+input[type="checkbox"]::before {
+  position: absolute;
+  content: "";
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: white;
+  top: 4px;
+  left: 4px;
+  transition: left linear 500ms;
+  box-shadow: inset 2px 2px 8px 0px rgba(0, 0, 0, 0.3);
+}
+
+input[type="checkbox"]:checked::before {
+  left: 28px;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: none;
+}
+
+input::-webkit-inner-spin-button,
+input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
