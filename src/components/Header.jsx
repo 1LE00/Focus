@@ -1,9 +1,11 @@
 import { useContext } from "react";
 import { Settings } from "./Settings"
-import { SettingsContext } from "./context/SettingsContext";
+import { SettingsContext } from "../context/SettingsContext";
+import { TimerContext } from "../context/TimerContext";
 
 export const Header = () => {
-  const { setToggle } = useContext(SettingsContext);
+  const { setToggle, darkTheme } = useContext(SettingsContext);
+  const { isActive } = useContext(TimerContext);
   const toggleModal = (modalId) => {
     const newValue = {
       reports: modalId === 1 ? true : false,
@@ -13,16 +15,16 @@ export const Header = () => {
     setToggle(newValue);
   };
   return (
-    <header className='flex justify-between max-w-[620px] w-full py-2 border-b-[2px] border-gray-700/20 relative'>
-      <a href="/" className="flex gap-1 justify-center items-center">
+    <header className={`flex justify-between max-w-[620px] w-full py-2 border-b-[2px] border-gray-700/20 relative`}>
+      <a href="/" className={`flex gap-1 justify-center items-center transition-opacity duration-250 ease ${isActive && darkTheme ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'}`}>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
           <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" />
         </svg>
         <h1 className="font-semibold min-[500px]:text-lg">Focus</h1>
       </a>
 
-      <nav className=" flex justify-center items-center gap-4">
-        <button title="Reports" type="button" className="flex items-center gap-1 hover:bg-white/10 " onClick={() => { toggleModal(1) }}>
+      <nav className={`flex justify-center items-center gap-4 transition-opacity duration-250 ease ${isActive && darkTheme ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'}`}>
+        <button title="Reports" type="button" className="flex items-center gap-1" onClick={() => { toggleModal(1) }}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
             <path fillRule="evenodd" d="M3 6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6Zm4.5 7.5a.75.75 0 0 1 .75.75v2.25a.75.75 0 0 1-1.5 0v-2.25a.75.75 0 0 1 .75-.75Zm3.75-1.5a.75.75 0 0 0-1.5 0v4.5a.75.75 0 0 0 1.5 0V12Zm2.25-3a.75.75 0 0 1 .75.75v6.75a.75.75 0 0 1-1.5 0V9.75A.75.75 0 0 1 13.5 9Zm3.75-1.5a.75.75 0 0 0-1.5 0v9a.75.75 0 0 0 1.5 0v-9Z" clipRule="evenodd" />
           </svg>

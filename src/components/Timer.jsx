@@ -1,18 +1,20 @@
 import { useContext, useEffect, useState } from "react";
-import { TimerContext } from "./context/TimerContext";
-import { SettingsContext } from "./context/SettingsContext";
+import { TimerContext } from "../context/TimerContext";
+import { SettingsContext } from "../context/SettingsContext";
+import { ThemeContext } from "../context/ThemeContext";
 
 
 export const Timer = () => {
     const {
-        minutes, activeButton, setActiveButton, sessionCount, changeSessionCount, tracker, setTracker, initialMinutesStateRef, changesIn, setChangesIn
+        minutes, activeButton, setActiveButton, sessionCount, changeSessionCount, tracker, setTracker, initialMinutesStateRef, changesIn, setChangesIn, isActive, setIsActive
     } = useContext(TimerContext);
 
     const {
-        autoStart, notificationOptions, toggle, longBreakInterval
+        autoStart, notificationOptions, toggle, longBreakInterval, darkTheme
     } = useContext(SettingsContext);
 
-    const [isActive, setIsActive] = useState(false);     // track if the timer is active or not 
+    const { theme } = useContext(ThemeContext);
+
     const [intervalId, setIntervalId] = useState(null);  // store the interval id
     const [timer, setTimer] = useState({                 // keep track of timer 
         minutes: minutes.focus,
@@ -227,25 +229,12 @@ export const Timer = () => {
                 toggleTimer();
             }
         };
-
         window.addEventListener('keydown', spacebarFunction);
         return () => {
             window.removeEventListener('keydown', spacebarFunction);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isActive]);
-    //  * Change background colors with button click, make sure the values are same with :root in index.css
-    useEffect(() => {
-        const backgroundColors = {
-            1: "hsl(0, 45%, 51%)",
-            2: "hsl(206, 53%, 51%)",
-            3: "hsl(140, 42%, 38%)",
-        };
-        document.body.style.backgroundColor = backgroundColors[activeButton];
-        return () => {
-            document.body.style.backgroundColor = backgroundColors[1];
-        }
-    }, [activeButton]);
     //  * Change the title of the document
     useEffect(() => {
         const favicon = document.querySelector("link[rel*='icon']");
@@ -263,17 +252,16 @@ export const Timer = () => {
         }
         document.title = `${timer.minutes.toString().padStart(2, 0)}:${timer.seconds.toString().padStart(2, 0)} - ${message}`;
     }, [timer, activeButton, tracker.isPaused]);
-
     return (
-        <main className="flex flex-col justify-center items-center mt-10 mb-8 w-full bg-white/10 p-4 rounded-lg max-w-[480px] min-[500px]:mt-12 min-[500px]:p-6">
-            <header className="timer-header flex justify-center items-center gap-4">
-                <button type="button" className={`text-xs ${activeButton === 1 ? 'bg-focus font-semibold' : 'bg-transparent font-medium'} p-2 rounded min-[500px]:text-sm min-[500px]:py-2 min-[500px]:px-4`} onClick={() => handleButtonCLick(1)}>Focus</button>
-                <button type="button" className={`text-xs ${activeButton === 2 ? 'bg-short font-semibold' : 'bg-transparent font-medium'} p-2 rounded min-[500px]:text-sm min-[500px]:py-2 min-[500px]:px-4`} onClick={() => handleButtonCLick(2)}>Short Break</button>
-                <button type="button" className={`text-xs ${activeButton === 3 ? 'bg-long font-semibold' : 'bg-transparent font-medium'} p-2 rounded min-[500px]:text-sm min-[500px]:py-2 min-[500px]:px-4`} onClick={() => handleButtonCLick(3)}>Long Break</button>
+        <main className={`flex flex-col justify-center items-center mt-10 mb-8 w-full transition-colors duration-250 linear ${isActive && darkTheme ? 'bg-transparent' : 'bg-white/10'} p-4 rounded-lg max-w-[480px] min-[500px]:mt-12 min-[500px]:p-6`}>
+            <header className={`timer-header flex justify-center items-center gap-4 transition-opacity duration-250 linear ${isActive && darkTheme ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'}`}>
+                <button type="button" className={`text-xs ${activeButton === 1 ? `bg-${theme.focus} font-semibold` : 'bg-transparent font-medium'} p-2 rounded min-[500px]:text-sm min-[500px]:py-2 min-[500px]:px-4`} onClick={() => handleButtonCLick(1)}>Focus</button>
+                <button type="button" className={`text-xs ${activeButton === 2 ? `bg-${theme.short} font-semibold` : 'bg-transparent font-medium'} p-2 rounded min-[500px]:text-sm min-[500px]:py-2 min-[500px]:px-4`} onClick={() => handleButtonCLick(2)}>Short Break</button>
+                <button type="button" className={`text-xs ${activeButton === 3 ? `bg-${theme.long} font-semibold` : 'bg-transparent font-medium'} p-2 rounded min-[500px]:text-sm min-[500px]:py-2 min-[500px]:px-4`} onClick={() => handleButtonCLick(3)}>Long Break</button>
             </header>
             <section className="timer text-7xl my-8 min-[500px]:text-9xl min-[500px]:font-medium">{timer.minutes.toString().padStart(2, 0)}:{timer.seconds.toString().padStart(2, 0)}</section>
             <footer className="flex justify-center items-center w-full relative max-w-xs mb-4">
-                <button type="button" title='Press Spacebar to start/pause' id='start' className={`${activeButton === 1 ? 'text-focus' : activeButton === 2 ? 'text-short' : 'text-long'} px-12 py-4 font-semibold uppercase rounded bg-white w-full max-w-[65%] min-[500px]:text-xl ${isActive ? ' translate-y-1 shadow-none' : 'shadow-start'}`} onClick={isActive ? pauseTimer : resumeTimer} >
+                <button type="button" title='Press Spacebar to start/pause' id='start' className={`${activeButton === 1 ? `text-${theme.focus}` : activeButton === 2 ? `text-${theme.short}` : `text-${theme.long}`} px-12 py-4 font-semibold uppercase rounded ${isActive && darkTheme ? `bg-transparent text-white` : 'bg-white'} w-full max-w-[65%] min-[500px]:text-xl ${isActive ? ' translate-y-1 shadow-none' : 'shadow-start'}`} onClick={isActive ? pauseTimer : resumeTimer} >
                     {isActive ? 'Pause' : 'Start'}</button>
                 <button type="button" title={`Skip ${activeButton === 1 ? 'Focus' : 'Break'} Session`} className={`ml-8 absolute right-2 top-5 ${isActive ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'} duration-200 ease-in`}>
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" width="15" viewBox="0 0 320 512"><path fill="#fff" d="M52.5 440.6c-9.5 7.9-22.8 9.7-34.1 4.4S0 428.4 0 416L0 96C0 83.6 7.2 72.3 18.4 67s24.5-3.6 34.1 4.4l192 160L256 241l0-145c0-17.7 14.3-32 32-32s32 14.3 32 32l0 320c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-145-11.5 9.6-192 160z" onClick={() => skip()} /></svg>

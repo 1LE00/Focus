@@ -43,11 +43,13 @@ export const TimerProvider = ({ children }) => {
         break: Number.parseInt(localStorage.getItem("Sessions Completed")) || 1
     });
     // * Keep track of timer if it has ran before automatically starting breaks and focus sessions
+    // * didTimerRun is used to automate breaks and focus session, returns true if the timer has run once
     const [tracker, setTracker] = useState({ didTimerRun: false, isPaused: false });
-
+    // TODO Merge isActive set inside tracker later on 
+    const [isActive, setIsActive] = useState(false);     // track if the timer is active or not 
     return (
         <TimerContext.Provider value={{
-            activeButton, setActiveButton, sessionCount, changeSessionCount, minutes, setMinutes, tracker, setTracker, initialMinutesStateRef, changesIn, setChangesIn
+            activeButton, setActiveButton, sessionCount, changeSessionCount, minutes, setMinutes, tracker, setTracker, initialMinutesStateRef, changesIn, setChangesIn, isActive, setIsActive
         }}>
             {children}
         </TimerContext.Provider>
