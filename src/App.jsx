@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { Header } from './components/header'
+import { Header } from './components/Header'
 import { Session } from './components/Session'
 import { Timer } from './components/Timer'
 import { TimerContext } from './context/TimerContext';
