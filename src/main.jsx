@@ -5,13 +5,16 @@ import './index.css'
 import { SettingsProvider } from './context/SettingsContext.jsx'
 import { TimerProvider } from './context/TimerContext.jsx'
 import { ThemeProvider } from './context/ThemeContext.jsx'
+import { SoundsProvider } from './context/SoundsContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ThemeProvider>
       <SettingsProvider>
         <TimerProvider>
-          <App />
+          <SoundsProvider>
+            <App />
+          </SoundsProvider>
         </TimerProvider>
       </SettingsProvider>
     </ThemeProvider>

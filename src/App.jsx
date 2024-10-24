@@ -5,6 +5,7 @@ import { Timer } from './components/Timer'
 import { TimerContext } from './context/TimerContext';
 import { ThemeContext } from './context/ThemeContext';
 import { SettingsContext } from './context/SettingsContext';
+import { Progressbar } from './components/Progressbar';
 
 
 export default function App() {
@@ -20,6 +21,7 @@ export default function App() {
   return (
     <section className={`focus-app bg-${darkTheme && isActive ? theme.dark : map[activeButton]} min-h-screen p-3 flex flex-col items-center w-100 transition ease duration-1000`} >
       <Header />
+      <Progressbar />
       <Timer />
       <Session />
     </section>

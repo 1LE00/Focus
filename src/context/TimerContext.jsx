@@ -45,11 +45,12 @@ export const TimerProvider = ({ children }) => {
     // * Keep track of timer if it has ran before automatically starting breaks and focus sessions
     // * didTimerRun is used to automate breaks and focus session, returns true if the timer has run once
     const [tracker, setTracker] = useState({ didTimerRun: false, isPaused: false });
-    // TODO Merge isActive set inside tracker later on 
-    const [isActive, setIsActive] = useState(false);     // track if the timer is active or not 
+    const [isActive, setIsActive] = useState(false);     // * Track if the timer is active or not
+    // * To track the progress amount which will be used as width in Progressbar component
+    const [progress, setProgress] = useState(0);
     return (
         <TimerContext.Provider value={{
-            activeButton, setActiveButton, sessionCount, changeSessionCount, minutes, setMinutes, tracker, setTracker, initialMinutesStateRef, changesIn, setChangesIn, isActive, setIsActive
+            activeButton, setActiveButton, sessionCount, changeSessionCount, minutes, setMinutes, tracker, setTracker, initialMinutesStateRef, changesIn, setChangesIn, isActive, setIsActive, progress, setProgress
         }}>
             {children}
         </TimerContext.Provider>

@@ -14,8 +14,7 @@ export const SettingsProvider = ({ children }) => {
     // * Set state for toggle options
     const [toggle, setToggle] = useState({
         reports: false,
-        settings: false,
-        options: false
+        settings: false
     });
     // * Set notifications options
     const [notificationOptions, setNotificationOptions] = useState({

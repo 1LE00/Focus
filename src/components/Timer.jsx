@@ -2,11 +2,11 @@ import { useContext, useEffect, useState } from "react";
 import { TimerContext } from "../context/TimerContext";
 import { SettingsContext } from "../context/SettingsContext";
 import { ThemeContext } from "../context/ThemeContext";
-
+import { SoundsContext } from "../context/SoundsContext";
 
 export const Timer = () => {
     const {
-        minutes, activeButton, setActiveButton, sessionCount, changeSessionCount, tracker, setTracker, initialMinutesStateRef, changesIn, setChangesIn, isActive, setIsActive
+        minutes, activeButton, setActiveButton, sessionCount, changeSessionCount, tracker, setTracker, initialMinutesStateRef, changesIn, setChangesIn, isActive, setIsActive, setProgress
     } = useContext(TimerContext);
 
     const {
@@ -14,6 +14,8 @@ export const Timer = () => {
     } = useContext(SettingsContext);
 
     const { theme } = useContext(ThemeContext);
+
+    const { playButtonSound } = useContext(SoundsContext);
 
     const [intervalId, setIntervalId] = useState(null);  // store the interval id
     const [timer, setTimer] = useState({                 // keep track of timer 
@@ -54,6 +56,7 @@ export const Timer = () => {
         // * they are automated
         setTracker({ didTimerRun: false, isPaused: false });
         setActiveButton(buttonId);
+        setProgress(0);
         if (isActive) {
             setIsActive(false);
             clearInterval(intervalId);
@@ -67,6 +70,9 @@ export const Timer = () => {
     const startTimer = () => {
         if (!isActive && intervalId == null) {
             setIsActive(true);
+            const totalDuration = timer.minutes * 60 * 1000;
+            const interval = 1000;
+            const increment = (interval / totalDuration) * 100;
             const id = setInterval(() => {
                 setTimer(prevTimer => {
                     if (prevTimer.seconds > 0) {
@@ -81,17 +87,24 @@ export const Timer = () => {
                         };
                     } else {
                         clearInterval(id);
-                        setIsActive(false);
                         updateSession();
                         return { minutes: 0, seconds: 0 }
                     }
                 });
-            }, 1000);
+                setProgress(prev => {
+                    if (prev >= 100) {
+                        clearInterval(id);
+                        return 100
+                    }
+                    return prev + increment
+                });
+            }, interval);
             setIntervalId(id);
         }
     };
     // @func to pause the timer
     const pauseTimer = () => {
+        playButtonSound('BUTTON_CLICK');
         clearInterval(intervalId);
         setIntervalId(null);
         setIsActive(false);
@@ -99,6 +112,7 @@ export const Timer = () => {
     };
     // @func to start or resume the timer
     const resumeTimer = () => {
+        playButtonSound('BUTTON_CLICK');
         setTracker(previous => ({ ...previous, isPaused: false }));
         startTimer();
     };
@@ -113,7 +127,7 @@ export const Timer = () => {
             resumeTimer();
         }
     };
-    // @func to update the sessions after the timer reaches 00:00 and display notifications
+    // @func to update the sessions after the timer reaches 00:00, display notifications and play sound
     const updateSession = (skipped) => {
         let sessionID;
         if (activeButton === 1) {
@@ -124,6 +138,7 @@ export const Timer = () => {
         // * Don't show notifications when user skips sessions
         if (!skipped) {
             showNotifications(sessionID);
+            playButtonSound('SESSION_END');
         }
         changeSession({ sessionID: sessionID });
     };
@@ -168,6 +183,10 @@ export const Timer = () => {
                     seconds: 0,
                     minutes: buttonMap[activeButton].value
                 })
+                setProgress(0);
+                clearInterval(intervalId);
+                setIntervalId(null);
+                setIsActive(false);
             }
             // * Change the initial state after the user has changed their preferences 
             initialMinutesStateRef.current = minutes;

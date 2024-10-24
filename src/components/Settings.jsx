@@ -3,6 +3,8 @@ import { TimerContext } from "../context/TimerContext";
 import { SettingsContext } from "../context/SettingsContext";
 import { ThemeButton } from "./Buttons/ThemeButton";
 import { ThemeContext } from "../context/ThemeContext";
+import { SoundsContext } from "../context/SoundsContext";
+import { Dropdown } from "./Dropdowns/Dropdown";
 
 export const Settings = () => {
     const {
@@ -16,13 +18,15 @@ export const Settings = () => {
 
     const { colors, theme, setTheme } = useContext(ThemeContext);
 
+    const { alarmAudioFiles, breakAudioFiles } = useContext(SoundsContext);
+
     // * Actions to be performed when we close the settings modal
     const closeModal = () => {
+        document.body.style.overflow = 'initial';
         // * Set all the toggles in nav to false
         setToggle({
             reports: false,
-            settings: false,
-            options: false
+            settings: false
         });
         // * Set it to false so any session doesn't start after the timer has run
         // * and user decides to automate focus or break
@@ -131,6 +135,7 @@ export const Settings = () => {
             show: false
         }));
     };
+
     return (
         <>
             <section className={`${toggle.settings ? 'flex' : 'hidden'} ${themeContent.show ? 'opacity-0' : 'opacity-1'} justify-center fixed inset-0 bg-black/75 z-10`} onClick={closeModal}>
@@ -235,8 +240,29 @@ export const Settings = () => {
                         </section>
                         {/* Theme options */}
 
+                        {/* Sound options */}
+                        <section className="text-gray-500 my-4 border-b border-b-black/20">
+                            <section className="flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" />
+                                </svg>
+                                <h2 className="uppercase font-medium text-sm">Sound</h2>
+                            </section>
+                            <section className="sound-options mt-4">
+                                <section className="flex items-baseline justify-between my-4">
+                                    <p className="text-black/75 text-sm font-medium">Alarm Sound</p>
+                                    <Dropdown audioArray={alarmAudioFiles} />
+                                </section>
+                                <section className="flex items-baseline justify-between my-4">
+                                    <p className="text-black/75 text-sm font-medium">Break Sound</p>
+                                    <Dropdown audioArray={breakAudioFiles} isBreakAudio={true} />
+                                </section>
+                            </section>
+                        </section>
+                        {/* Sound options */}
+
                         {/* Notfications options */}
-                        <section className="text-gray-500 my-4">
+                        <section className="text-gray-500 my-4 border-b border-b-black/20">
                             <section className="flex items-center gap-1">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0M3.124 7.5A8.969 8.969 0 0 1 5.292 3m13.416 0a8.969 8.969 0 0 1 2.168 4.5" />
@@ -257,7 +283,7 @@ export const Settings = () => {
                         {/* Notfications options */}
 
                         {/* Task options */}
-                        <section className="text-gray-500 my-4 border-b border-b-black/20">
+                        <section className="text-gray-500 my-4">
                             <section className="flex items-center gap-1">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
@@ -272,28 +298,12 @@ export const Settings = () => {
                             </section>
                         </section>
                         {/* Tasks options */}
-
-                        {/* Sound options */}
-                        <section className="text-gray-500 my-4">
-                            <section className="flex items-center gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" />
-                                </svg>
-
-                                <h2 className="uppercase font-medium text-sm">Sound</h2>
-                            </section>
-                            <section className="sound-options mt-4">
-                                <section className="flex items-center justify-between my-4">
-                                    <p className="text-black/75 text-sm font-medium">Alarm Sound</p>
-                                </section>
-                            </section>
-                        </section>
-                        {/* Sound options */}
                     </section>
                 </section>
-            </section>
+            </section >
             {/* Theme Modal */}
-            <section className={`theme-modal ${themeContent.show ? 'flex' : 'hidden'} justify-center items-center fixed inset-0 bg-black/75 z-10 px-4`} onClick={() => setThemeContent(previous => ({ ...previous, show: false }))}>
+            <section className={`theme-modal ${themeContent.show ? 'flex' : 'hidden'} justify-center items-center fixed inset-0 bg-black/75 z-10 px-4`
+            } onClick={() => setThemeContent(previous => ({ ...previous, show: false }))}>
                 <section className={`theme-modal-content bg-white relative px-8 py-4 rounded-lg max-w-96`} onClick={(e) => e.stopPropagation()}>
                     <h2 className="text-gray-900/90 font-medium mb-4 pb-4 border-b-2 border-b-gray-700/20 text-base text-center">Pick a color for {themeContent.title}</h2>
                     <section className="color-picker flex w-full items-start flex-wrap gap-4 overflow-auto">
@@ -308,7 +318,7 @@ export const Settings = () => {
                         )}
                     </section>
                 </section>
-            </section>
+            </section >
         </>
     )
 }

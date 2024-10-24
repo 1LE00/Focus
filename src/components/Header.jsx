@@ -7,15 +7,15 @@ export const Header = () => {
   const { setToggle, darkTheme } = useContext(SettingsContext);
   const { isActive } = useContext(TimerContext);
   const toggleModal = (modalId) => {
+    document.body.style.overflow = 'hidden';
     const newValue = {
       reports: modalId === 1 ? true : false,
-      settings: modalId === 2 ? true : false,
-      options: modalId === 3 ? true : false
+      settings: modalId === 2 ? true : false
     }
     setToggle(newValue);
   };
   return (
-    <header className={`flex justify-between max-w-[620px] w-full py-2 border-b-[2px] border-gray-700/20 relative`}>
+    <header className={`flex justify-between max-w-[620px] w-full py-2`}>
       <a href="/" className={`flex gap-1 justify-center items-center transition-opacity duration-250 ease ${isActive && darkTheme ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'}`}>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
           <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" />
@@ -42,12 +42,6 @@ export const Header = () => {
           </svg>
           <span className="hidden text-xs min-[500px]:inline min-[500px]:text-sm">Sign In</span>
         </a>
-
-        <button title="More options" type="button" onClick={() => { toggleModal(3) }}>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
-            <path fillRule="evenodd" d="M10.5 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm0 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm0 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z" clipRule="evenodd" />
-          </svg>
-        </button>
       </nav>
       <Settings />
     </header>
