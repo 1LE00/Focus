@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { TimerContext } from "../context/TimerContext";
 import { SettingsContext } from "../context/SettingsContext";
 import { ThemeContext } from "../context/ThemeContext";
@@ -22,6 +22,9 @@ export const Timer = () => {
         minutes: minutes.focus,
         seconds: 0
     });
+    // * Keep track of timer duration in ref so that it doesn't change on render
+    // * Will help to track progressbar accurately even when the user pauses
+    const totalDuration = useRef(timer.minutes);
     // * Switch between focus and break sessions using sessionID to keep track of them
     const [session, changeSession] = useState({
         sessionID: null
@@ -33,22 +36,18 @@ export const Timer = () => {
             ? If buttonId === 3 session should be 'long break'
     */
     const chooseCorrectSession = (buttonId) => {
-        if (buttonId === 1) {
-            return {
-                seconds: 0,
-                minutes: minutes.focus
-            }
-        } else if (buttonId === 2) {
-            return {
-                seconds: 0,
-                minutes: minutes.short
-            }
-        } else {
-            return {
-                seconds: 0,
-                minutes: minutes.long
-            }
+        return buttonId === 1 ? {
+            minutes: minutes.focus,
+            seconds: 0
         }
+            : buttonId === 2 ? {
+                minutes: minutes.short,
+                seconds: 0
+            }
+                : {
+                    minutes: minutes.long,
+                    seconds: 0
+                }
     };
     // @func to switch between focus and break sessions
     const handleButtonCLick = (buttonId) => {
@@ -70,9 +69,9 @@ export const Timer = () => {
     const startTimer = () => {
         if (!isActive && intervalId == null) {
             setIsActive(true);
-            const totalDuration = timer.minutes * 60 * 1000;
+            const timeLeft = totalDuration.current * 60 * 1000;
             const interval = 1000;
-            const increment = (interval / totalDuration) * 100;
+            const increment = (interval / timeLeft) * 100;
             const id = setInterval(() => {
                 setTimer(prevTimer => {
                     if (prevTimer.seconds > 0) {
@@ -162,6 +161,11 @@ export const Timer = () => {
             });
         }
     };
+    // * Change the ref's value when user switches the session
+    useEffect(() => {
+        totalDuration.current = timer.minutes;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeButton])
     // * Runs only when user changes their minutes preferences for focus or break 
     useEffect(() => {
         if (!toggle.settings) {
